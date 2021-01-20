@@ -34,9 +34,9 @@ def main() -> None:
 
     print('Enter the rules.')
     while True:
-        tmp_input = input()
+        tmp_input = input().replace(' ', '')
 
-        if tmp_input == 'done':
+        if tmp_input == '':
             break
         split_arr = tmp_input.split(arrow)
         key = split_arr[0]
@@ -60,6 +60,7 @@ def main() -> None:
 
     i = 0
     j = 0
+    max_i = 0
     current = init_statement + f' [{i}, {j}]'
     current = current.split(arrow)
     current = current[0] + arrow + pointer + current[1]
@@ -81,10 +82,14 @@ def main() -> None:
                 working_arr.remove(current)
 
                 try:
+                    if read_mode and len(to_read) > 0:
+                        working_arr.insert(0, to_read.pop(0))
+                    else:
+                        read_mode = False
                     current = working_arr[0]
 
                 except Exception:
-                    working_arr.append(to_read.pop(0))
+                    working_arr.insert(0, to_read.pop(0))
 
                     read_mode = True
                     current = working_arr[0]
@@ -114,9 +119,8 @@ def main() -> None:
 
         time.sleep(0.1)
         if read_mode:
-            read_mode = False
             try:
-                if symbol != word[i]:
+                if symbol != word[int(current[-2])]:
                     working_arr.remove(current)
                     done_arr.append(current)
 
@@ -124,8 +128,10 @@ def main() -> None:
                     done_arr.append(current)
                     working_arr.remove(current)
                     right_side_split = current_split[1].split(symbol)
-                    i = i + 1
-                    print(f'\ni={i}')
+                    i = int(current[-2]) + 1
+                    if i > max_i:
+                        print(f'\ni={i}')
+                        max_i = i
                     statement = current_split[0] + arrow + right_side_split[0] \
                         .replace(pointer, '') + symbol + pointer + right_side_split[1][:-2] + str(i) + ']'
                     print(statement + '  wczytanie')
@@ -134,6 +140,10 @@ def main() -> None:
                 break
 
         try:
+            if read_mode and len(to_read) > 0:
+                working_arr.insert(0, to_read.pop(0))
+            else:
+                read_mode = False
             current = working_arr[0]
 
         except Exception:
