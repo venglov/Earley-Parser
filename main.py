@@ -29,12 +29,14 @@ def find_parents(arr: List, symbol: str, index: str):
 
 # noinspection PyBroadException
 def main() -> None:
-    init_statement = 'S\'' + arrow + 'E'
+    init_statement = ''
     rules = {}
 
     print('Enter the rules.')
     while True:
         tmp_input = input()
+        if init_statement == '':
+            init_statement = tmp_input
         if tmp_input == 'done':
             break
         split_arr = tmp_input.split(arrow)
