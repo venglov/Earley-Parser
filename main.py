@@ -83,13 +83,49 @@ def main() -> None:
 
                 try:
                     if read_mode and len(to_read) > 0:
-                        working_arr.insert(0, to_read.pop(0))
+                        read_statement = to_read.pop(0)
+                        if len(to_read) == 0:
+                            read_mode = False
+                        if read_statement not in working_arr and read_statement not in done_arr and read_statement not in to_read:
+                            working_arr.insert(0, read_statement)
+                        else:
+                            done_arr.append(read_statement)
+                            while True:
+                                if len(to_read) == 0:
+                                    read_mode = False
+                                    break
+                                else:
+                                    read_statement = to_read.pop(0)
+
+                                if read_statement not in working_arr and read_statement not in done_arr and read_statement not in to_read:
+                                    working_arr.insert(0, read_statement)
+                                    break
+                                else:
+                                    done_arr.append(read_statement)
                     else:
                         read_mode = False
                     current = working_arr[0]
 
                 except Exception:
-                    working_arr.insert(0, to_read.pop(0))
+                    read_statement = to_read.pop(0)
+                    if len(to_read) == 0:
+                        read_mode = False
+                    if read_statement not in working_arr and read_statement not in done_arr and read_statement not in to_read:
+                        working_arr.insert(0, read_statement)
+                    else:
+                        done_arr.append(read_statement)
+                        while True:
+                            if len(to_read) == 0:
+                                read_mode = False
+                                break
+                            else:
+                                read_statement = to_read.pop(0)
+
+                            if read_statement not in working_arr and read_statement not in done_arr and read_statement not in to_read:
+                                working_arr.insert(0, read_statement)
+                                break
+                            else:
+                                done_arr.append(read_statement)
 
                     read_mode = True
                     current = working_arr[0]
@@ -97,12 +133,15 @@ def main() -> None:
             if symbol in rules:
                 for el in rules[symbol]:
                     statement = symbol + arrow + pointer + el + f' [{i}, {i}]'
-                    if statement in done_arr or statement in working_arr:
+                    if statement in done_arr or statement in working_arr or statement in to_read:
                         continue
                     working_arr.append(statement)
                     print(statement + '  przewidywanie')
 
                     time.sleep(0.2)
+                done_arr.append(current)
+                working_arr.remove(current)
+            if symbol not in rules and symbol not in word:
                 done_arr.append(current)
                 working_arr.remove(current)
         else:
@@ -114,8 +153,9 @@ def main() -> None:
             done_arr.append(current)
             for p in parents:
                 statement = move_pointer(p, i)
-                working_arr.append(statement)
-                print(statement + '  uzupelnienie')
+                if statement not in working_arr and statement not in done_arr and statement not in to_read:
+                    working_arr.append(statement)
+                    print(statement + '  uzupelnienie')
 
         time.sleep(0.1)
         if read_mode:
@@ -133,21 +173,45 @@ def main() -> None:
                         print(f'\ni={i}')
                         max_i = i
                     statement = current_split[0] + arrow + right_side_split[0] \
-                        .replace(pointer, '') + symbol + pointer + right_side_split[1][:-2] + str(i) + ']'
+                        .replace(pointer, '') + symbol + pointer + ''.join(right_side_split[1:-1]) + right_side_split[-1][:-2] + str(i) + ']'
                     print(statement + '  wczytanie')
-                    working_arr.append(statement)
+                    if statement not in working_arr and statement not in done_arr and statement not in to_read:
+                        working_arr.append(statement)
             except Exception:
                 break
 
         try:
             if read_mode and len(to_read) > 0:
-                working_arr.insert(0, to_read.pop(0))
+                read_statement = to_read.pop(0)
+                if len(to_read) == 0:
+                    read_mode = False
+                if read_statement not in working_arr and read_statement not in done_arr and read_statement not in to_read:
+                    working_arr.insert(0, read_statement)
+                else:
+                    done_arr.append(read_statement)
+                    while True:
+                        if len(to_read) == 0:
+                            read_mode = False
+                            break
+                        else:
+                            read_statement = to_read.pop(0)
+
+                        if read_statement not in working_arr and read_statement not in done_arr and read_statement not in to_read:
+                            working_arr.insert(0, read_statement)
+                            break
+                        else:
+                            done_arr.append(read_statement)
+
             else:
                 read_mode = False
             current = working_arr[0]
 
         except Exception:
-            working_arr.append(to_read.pop(0))
+            read_statement = to_read.pop(0)
+            if len(to_read) == 0:
+                read_mode = False
+            if read_statement not in working_arr and read_statement not in done_arr and read_statement not in to_read:
+                working_arr.insert(0, read_statement)
 
             read_mode = True
             current = working_arr[0]
