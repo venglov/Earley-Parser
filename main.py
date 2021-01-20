@@ -32,7 +32,7 @@ def main() -> None:
     init_statement = ''
     rules = {}
 
-    print('Enter the rules.')
+    print('Enter the rules. The first rule should be init like S\' -> S')
     while True:
         tmp_input = input().replace(' ', '')
 
