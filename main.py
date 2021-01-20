@@ -35,15 +35,23 @@ def main() -> None:
     print('Enter the rules.')
     while True:
         tmp_input = input()
-        if init_statement == '':
-            init_statement = tmp_input
+
         if tmp_input == 'done':
             break
         split_arr = tmp_input.split(arrow)
         key = split_arr[0]
         if key not in rules:
             rules = {**rules, **{key: []}}
-        rules.get(key).append(split_arr[1])
+        if '|' not in split_arr[1]:
+            if init_statement == '':
+                init_statement = tmp_input
+            rules.get(key).append(split_arr[1])
+        else:
+            for rule in split_arr[1].split('|'):
+                if init_statement == '':
+                    init_statement = f'{key}->{rule}'
+                rules.get(key).append(rule)
+
     # rules = {'E': ['T', 'E+T'], 'T': ['P', 'T*P'], 'P': 'a'}
     print('OK. Enter the word.')
     word = input()
