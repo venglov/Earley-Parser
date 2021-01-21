@@ -1,4 +1,4 @@
-# Earley-parser
+# Earley-parser (dev)
 
 Przykładowe inputy oraz outputy. Proszę żeby ktoś ogarnięty to sprawdził. W razie problemów proszę się kontaktować.
 
