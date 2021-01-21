@@ -6,23 +6,24 @@ arrow = '->'
 pointer = '.'
 
 
-def get_left_symbol(string: str):
+def get_left_symbol(string: str) -> str:
     string_split = string.split(arrow)
     return string_split[0]
 
 
-def move_pointer(string: str, new_index: int):
-    current_split = string.split(arrow)
-    if current_split[1][0] == pointer:
-        current_split[1] = current_split[1]
-    right_side_split = current_split[1].split(pointer)
-    symbol = right_side_split[1][0]
-    statement = current_split[0] + arrow + right_side_split[0] \
-        .replace(pointer, '') + symbol + pointer + right_side_split[1][1:-2] + f'{new_index}]'
+def swap(string: str, i: int, j: int) -> str:
+    string = list(string)
+    string[i], string[j] = string[j], string[i]
+    return ''.join(string)
+
+
+def move_pointer(string: str, new_index: int) -> str:
+    pointer_index = string.index(pointer)
+    statement = swap(string, pointer_index, pointer_index + 1)[:-2] + f'{new_index}]'
     return statement
 
 
-def find_parents(arr: List, symbol: str, index: str):
+def find_parents(arr: List, symbol: str, index: str) -> List:
     p = re.compile(fr'^.*\.{symbol}+.*$')
     return list(set([s for s in arr if p.match(s) and s[-2] == index]))
 
@@ -84,8 +85,8 @@ def main() -> None:
                 try:
                     if read_mode and len(to_read) > 0:
                         read_statement = to_read.pop(0)
-                        if len(to_read) == 0:
-                            read_mode = False
+                        # if len(to_read) == 0:
+                        #     read_mode = False
                         if read_statement not in working_arr and read_statement not in done_arr and read_statement not in to_read:
                             working_arr.insert(0, read_statement)
                         else:
@@ -102,14 +103,14 @@ def main() -> None:
                                     break
                                 else:
                                     done_arr.append(read_statement)
-                    else:
-                        read_mode = False
+                    # else:
+                    #     read_mode = False
                     current = working_arr[0]
 
                 except Exception:
                     read_statement = to_read.pop(0)
-                    if len(to_read) == 0:
-                        read_mode = False
+                    # if len(to_read) == 0:
+                    #     read_mode = False
                     if read_statement not in working_arr and read_statement not in done_arr and read_statement not in to_read:
                         working_arr.insert(0, read_statement)
                     else:
@@ -163,6 +164,8 @@ def main() -> None:
                 if symbol != word[int(current[-2])]:
                     working_arr.remove(current)
                     done_arr.append(current)
+                    if len(to_read) == 0:
+                        read_mode = False
 
                 else:
                     done_arr.append(current)
@@ -172,9 +175,11 @@ def main() -> None:
                     if i > max_i:
                         print(f'\ni={i}')
                         max_i = i
-                    statement = current_split[0] + arrow + right_side_split[0] \
-                        .replace(pointer, '') + symbol + pointer + ''.join(right_side_split[1:-1]) + right_side_split[-1][:-2] + str(i) + ']'
+                    statement = swap(current, current.index(pointer), current.index(pointer) + 1)[:-2] + str(
+                        i) + ']'
                     print(statement + '  wczytanie')
+                    if len(to_read) == 0:
+                        read_mode = False
                     if statement not in working_arr and statement not in done_arr and statement not in to_read:
                         working_arr.append(statement)
             except Exception:
@@ -183,8 +188,8 @@ def main() -> None:
         try:
             if read_mode and len(to_read) > 0:
                 read_statement = to_read.pop(0)
-                if len(to_read) == 0:
-                    read_mode = False
+                # if len(to_read) == 0:
+                #     read_mode = False
                 if read_statement not in working_arr and read_statement not in done_arr and read_statement not in to_read:
                     working_arr.insert(0, read_statement)
                 else:
@@ -202,14 +207,14 @@ def main() -> None:
                         else:
                             done_arr.append(read_statement)
 
-            else:
-                read_mode = False
+            # else:
+            #     read_mode = False
             current = working_arr[0]
 
         except Exception:
             read_statement = to_read.pop(0)
-            if len(to_read) == 0:
-                read_mode = False
+            # if len(to_read) == 0:
+            #     read_mode = False
             if read_statement not in working_arr and read_statement not in done_arr and read_statement not in to_read:
                 working_arr.insert(0, read_statement)
 
