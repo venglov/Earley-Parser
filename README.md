@@ -1,5 +1,6 @@
 # Earley-parser (dev)
 
+Na pewno działa na python 3.7.9\
 Przykładowe inputy oraz outputy. Proszę żeby ktoś ogarnięty to sprawdził. W razie problemów proszę się kontaktować.
 
 ![Earley-parser%20d9476b0cb9174a8fb3cadd26920c712b/Untitled.png](Earley-parser%20d9476b0cb9174a8fb3cadd26920c712b/Untitled.png)
