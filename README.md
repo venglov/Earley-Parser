@@ -1,12 +1,12 @@
-# Earley-parser
+# Earley-parser #
 
-##UWAGA
+### UWAGA ###
 Chociaż sprawdziłem poprawność na dużej ilości różnych przykładów i było git,
 jednak gorąco zachęcam do pilnego spawdzania outputu.\
 Na pewno działa na python 3.7.9\
 Jest szansa że wprowadzę jeszcze jakieś fixy w najbliższym czasie, więc bezpośrednio przed dniem X
 lepiej se zrób git pull.
-##Przykładowe inputy oraz outputy. 
+### Przykładowe inputy oraz outputy. ###
 \
 ![Earley-parser%20d9476b0cb9174a8fb3cadd26920c712b/Untitled.png](Earley-parser%20d9476b0cb9174a8fb3cadd26920c712b/Untitled.png)\
 \
