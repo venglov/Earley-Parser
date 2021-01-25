@@ -17,15 +17,24 @@ def swap(string: str, i: int, j: int) -> str:
     return ''.join(string)
 
 
+def extract_indexes(statement):
+    m = re.search(r'\[(.+?)]', statement)
+    found = m.group(1)
+    found = found.split(', ')
+    return found
+
+
 def move_pointer(string: str, new_index: int) -> str:
     pointer_index = string.index(pointer)
-    statement = swap(string, pointer_index, pointer_index + 1)[:-2] + f'{new_index}]'
+    statement = swap(string, pointer_index, pointer_index + 1)
+    border = (1 + len(extract_indexes(statement)[1])) * -1
+    statement = statement[:border] + str(new_index) + ']'
     return statement
 
 
 def find_parents(arr: List, symbol: str, index: str) -> List:
     p = re.compile(fr'^.*\.{symbol}+.*$')
-    return list(set([s for s in arr if p.match(s) and s[-2] == index]))
+    return list(set([s for s in arr if p.match(s) and int(re.search(r'\[(.+?)]', s).group(1).split(', ')[1]) == index]))
 
 
 def read(read_mode, to_read, working_arr, done_arr):
@@ -91,6 +100,7 @@ def main() -> None:
     read_mode = False
     successful = False
 
+    word_to_indexes = {}
     to_read = []
     working_arr = []
     done_arr = []
@@ -122,9 +132,9 @@ def main() -> None:
                     if statement in done_arr or statement in working_arr or statement in to_read:
                         continue
                     working_arr.append(statement)
+                    word_to_indexes.update({statement: (i, i)})
                     print(statement + '  przewidywanie')
 
-                    time.sleep(0.2)
                 done_arr.append(current)
                 working_arr.remove(current)
             if symbol not in rules and symbol not in word:
@@ -133,7 +143,8 @@ def main() -> None:
         else:
 
             symbol = get_left_symbol(current)
-            parents = find_parents(done_arr, symbol, current[-5])
+            statement_x, _ = word_to_indexes.get(current)
+            parents = find_parents(done_arr, symbol, statement_x)
 
             working_arr.remove(current)
             done_arr.append(current)
@@ -147,10 +158,13 @@ def main() -> None:
                     else:
                         print(statement + '  uzupelnienie')
 
-        time.sleep(0.1)
+                    found = extract_indexes(statement)
+                    word_to_indexes.update({statement: (int(found[0]), int(found[1]))})
+
         if read_mode:
             try:
-                if symbol != word[int(current[-2])]:
+                found = extract_indexes(current)
+                if symbol != word[int(found[1])]:
                     working_arr.remove(current)
                     done_arr.append(current)
                     if len(to_read) == 0:
@@ -159,13 +173,17 @@ def main() -> None:
                 else:
                     done_arr.append(current)
                     working_arr.remove(current)
-                    i = int(current[-2]) + 1
+                    i = int(found[1]) + 1
                     if i > max_i:
                         print(f'\ni={i}')
                         max_i = i
-                    statement = swap(current, current.index(pointer), current.index(pointer) + 1)[:-2] + str(
-                        i) + ']'
+                    statement = swap(current, current.index(pointer), current.index(pointer) + 1)
+                    found = extract_indexes(statement)
+                    border = (1 + len(found[1])) * -1
+                    statement = statement[:border] + str(i) + ']'
                     print(statement + '  wczytanie')
+                    found = extract_indexes(statement)
+                    word_to_indexes.update({statement: (int(found[0]), int(found[1]))})
                     if len(to_read) == 0:
                         read_mode = False
                     if statement not in working_arr and statement not in done_arr and statement not in to_read:
