@@ -28,6 +28,29 @@ def find_parents(arr: List, symbol: str, index: str) -> List:
     return list(set([s for s in arr if p.match(s) and s[-2] == index]))
 
 
+def read(read_mode, to_read, working_arr, done_arr):
+    read_statement = to_read.pop(0)
+
+    if read_statement not in working_arr and read_statement not in done_arr and read_statement not in to_read:
+        working_arr.insert(0, read_statement)
+    else:
+        done_arr.append(read_statement)
+        while True:
+            if len(to_read) == 0:
+                read_mode = False
+                break
+            else:
+                read_statement = to_read.pop(0)
+
+            if read_statement not in working_arr and read_statement not in done_arr and read_statement not in to_read:
+                working_arr.insert(0, read_statement)
+                break
+            else:
+                done_arr.append(read_statement)
+
+    return read_mode, to_read, working_arr, done_arr
+
+
 # noinspection PyBroadException
 def main() -> None:
     init_statement = ''
@@ -57,8 +80,7 @@ def main() -> None:
     print('OK. Enter the word.')
     word = input()
     # word = 'a+a*a'
-    print(word)
-
+    final_statement = init_statement + f'. [0, {len(word)}]'
     i = 0
     j = 0
     max_i = 0
@@ -67,6 +89,7 @@ def main() -> None:
     current = current[0] + arrow + pointer + current[1]
 
     read_mode = False
+    successful = False
 
     to_read = []
     working_arr = []
@@ -84,52 +107,14 @@ def main() -> None:
 
                 try:
                     if read_mode and len(to_read) > 0:
-                        read_statement = to_read.pop(0)
-                        # if len(to_read) == 0:
-                        #     read_mode = False
-                        if read_statement not in working_arr and read_statement not in done_arr and read_statement not in to_read:
-                            working_arr.insert(0, read_statement)
-                        else:
-                            done_arr.append(read_statement)
-                            while True:
-                                if len(to_read) == 0:
-                                    read_mode = False
-                                    break
-                                else:
-                                    read_statement = to_read.pop(0)
-
-                                if read_statement not in working_arr and read_statement not in done_arr and read_statement not in to_read:
-                                    working_arr.insert(0, read_statement)
-                                    break
-                                else:
-                                    done_arr.append(read_statement)
-                    # else:
-                    #     read_mode = False
+                        read_mode, to_read, working_arr, done_arr = read(read_mode, to_read, working_arr, done_arr)
                     current = working_arr[0]
 
                 except Exception:
-                    read_statement = to_read.pop(0)
-                    # if len(to_read) == 0:
-                    #     read_mode = False
-                    if read_statement not in working_arr and read_statement not in done_arr and read_statement not in to_read:
-                        working_arr.insert(0, read_statement)
-                    else:
-                        done_arr.append(read_statement)
-                        while True:
-                            if len(to_read) == 0:
-                                read_mode = False
-                                break
-                            else:
-                                read_statement = to_read.pop(0)
-
-                            if read_statement not in working_arr and read_statement not in done_arr and read_statement not in to_read:
-                                working_arr.insert(0, read_statement)
-                                break
-                            else:
-                                done_arr.append(read_statement)
-
+                    read_mode, to_read, working_arr, done_arr = read(read_mode, to_read, working_arr, done_arr)
                     read_mode = True
                     current = working_arr[0]
+
                 continue
             if symbol in rules:
                 for el in rules[symbol]:
@@ -156,7 +141,11 @@ def main() -> None:
                 statement = move_pointer(p, i)
                 if statement not in working_arr and statement not in done_arr and statement not in to_read:
                     working_arr.append(statement)
-                    print(statement + '  uzupelnienie')
+                    if statement == final_statement:
+                        print(statement + '  uzupelnienie' + ' <----------- słowo należy do języka')
+                        successful = True
+                    else:
+                        print(statement + '  uzupelnienie')
 
         time.sleep(0.1)
         if read_mode:
@@ -170,7 +159,6 @@ def main() -> None:
                 else:
                     done_arr.append(current)
                     working_arr.remove(current)
-                    right_side_split = current_split[1].split(symbol)
                     i = int(current[-2]) + 1
                     if i > max_i:
                         print(f'\ni={i}')
@@ -187,39 +175,25 @@ def main() -> None:
 
         try:
             if read_mode and len(to_read) > 0:
-                read_statement = to_read.pop(0)
-                # if len(to_read) == 0:
-                #     read_mode = False
-                if read_statement not in working_arr and read_statement not in done_arr and read_statement not in to_read:
-                    working_arr.insert(0, read_statement)
-                else:
-                    done_arr.append(read_statement)
-                    while True:
-                        if len(to_read) == 0:
-                            read_mode = False
-                            break
-                        else:
-                            read_statement = to_read.pop(0)
-
-                        if read_statement not in working_arr and read_statement not in done_arr and read_statement not in to_read:
-                            working_arr.insert(0, read_statement)
-                            break
-                        else:
-                            done_arr.append(read_statement)
-
-            # else:
-            #     read_mode = False
+                read_mode, to_read, working_arr, done_arr = read(read_mode, to_read, working_arr, done_arr)
             current = working_arr[0]
 
         except Exception:
-            read_statement = to_read.pop(0)
-            # if len(to_read) == 0:
-            #     read_mode = False
+            try:
+                read_statement = to_read.pop(0)
+            except Exception:
+                break
             if read_statement not in working_arr and read_statement not in done_arr and read_statement not in to_read:
                 working_arr.insert(0, read_statement)
 
             read_mode = True
             current = working_arr[0]
+
+    if not successful:
+        print("\nLooks like there is no statement to proceed")
+        print("Please check the rules and the word")
+        print("If they are valid, the most likely the word does not belong to this language")
+        print("It is highly recommended to check all the output because the bug is not excluded")
 
 
 if __name__ == '__main__':
