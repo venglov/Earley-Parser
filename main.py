@@ -1,6 +1,5 @@
 import re
-import time
-from typing import List
+from typing import List, Tuple
 
 arrow = '->'
 pointer = '.'
@@ -17,7 +16,7 @@ def swap(string: str, i: int, j: int) -> str:
     return ''.join(string)
 
 
-def extract_indexes(statement):
+def extract_indexes(statement: str) -> List[str]:
     m = re.search(r'\[(.+?)]', statement)
     found = m.group(1)
     found = found.split(', ')
@@ -37,7 +36,7 @@ def find_parents(arr: List, symbol: str, index: str) -> List:
     return list(set([s for s in arr if p.match(s) and int(re.search(r'\[(.+?)]', s).group(1).split(', ')[1]) == index]))
 
 
-def read(read_mode, to_read, working_arr, done_arr):
+def read(read_mode: bool, to_read: List, working_arr: List, done_arr: List) -> Tuple[bool, List, List, List]:
     read_statement = to_read.pop(0)
 
     if read_statement not in working_arr and read_statement not in done_arr and read_statement not in to_read:
@@ -105,6 +104,22 @@ def main() -> None:
     working_arr = []
     done_arr = []
     working_arr.append(current)
+
+    non_terminals_to_null = []
+    while True:
+        keep_on = False
+        for (left_symbol, right_arr) in rules.items():
+            if left_symbol not in non_terminals_to_null:
+                if '' in right_arr:
+                    non_terminals_to_null.append(left_symbol)
+                    keep_on = True
+                for null in non_terminals_to_null:
+                    if null in right_arr:
+                        non_terminals_to_null.append(left_symbol)
+                        keep_on = True
+        if not keep_on:
+            break
+
     print(working_arr[0] + '  sytuacja startowa')
     while True:
         current_split = current.split(arrow)
@@ -134,6 +149,13 @@ def main() -> None:
                     working_arr.append(statement)
                     word_to_indexes.update({statement: (i, i)})
                     print(statement + '  przewidywanie')
+                if symbol in non_terminals_to_null:
+                    statement = move_pointer(current, int(extract_indexes(current)[1]))
+                    if statement in done_arr or statement in working_arr or statement in to_read:
+                        continue
+                    working_arr.append(statement)
+                    word_to_indexes.update({statement: (i, i)})
+                    print(statement + '  uzupełnienie')
 
                 done_arr.append(current)
                 working_arr.remove(current)
@@ -153,10 +175,10 @@ def main() -> None:
                 if statement not in working_arr and statement not in done_arr and statement not in to_read:
                     working_arr.append(statement)
                     if statement == final_statement:
-                        print(statement + '  uzupelnienie' + ' <----------- słowo należy do języka')
+                        print(statement + '  uzupełnienie' + ' <----------- słowo należy do języka')
                         successful = True
                     else:
-                        print(statement + '  uzupelnienie')
+                        print(statement + '  uzupełnienie')
 
                     found = extract_indexes(statement)
                     word_to_indexes.update({statement: (int(found[0]), int(found[1]))})

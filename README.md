@@ -153,4 +153,17 @@ T->T.*P [2, 5]  uzupelnienie\
 S'->E. [0, 5]  uzupelnienie <----------- słowo należy do języka\
 E->E.+T [0, 5]  uzupelnienie
 
+![Earley-parser%20d9476b0cb9174a8fb3cadd26920c712b/eps.png](Earley-parser%20d9476b0cb9174a8fb3cadd26920c712b/eps.png)
+
+S'->.S [0, 0]  sytuacja startowa\
+S->.EAAA [0, 0]  przewidywanie\
+E->. [0, 0]  przewidywanie\
+S->E.AAA [0, 0]  uzupełnienie\
+A->.E [0, 0]  przewidywanie\
+S->EA.AA [0, 0]  uzupełnienie\
+A->E. [0, 0]  uzupełnienie\
+S->EAA.A [0, 0]  uzupełnienie\
+S->EAAA. [0, 0]  uzupełnienie\
+S'->S. [0, 0]  uzupełnienie <----------- słowo należy do języka
+
 ![Earley-parser%20d9476b0cb9174a8fb3cadd26920c712b/lol.jpg](Earley-parser%20d9476b0cb9174a8fb3cadd26920c712b/lol.jpg)
