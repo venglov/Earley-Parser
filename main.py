@@ -86,7 +86,7 @@ def main() -> None:
 
     # rules = {'E': ['T', 'E+T'], 'T': ['P', 'T*P'], 'P': 'a'}
     print('OK. Enter the word.')
-    word = input()
+    word = input().replace(' ', '')
     # word = 'a+a*a'
     final_statement = init_statement + f'. [0, {len(word)}]'
     i = 0
